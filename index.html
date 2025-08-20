@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Canciones</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+         body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background: #f4f7f6;
+        color: #333;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .container {
+        max-width: 800px;
+        width: 100%;
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        text-align: center;
+        color: #444;
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        font-weight: 300;
+    }
+
+    .search-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 30px;
+    }
+
+    .search-container input[type="text"] {
+        padding: 12px;
+        width: 70%;
+        border: 1px solid #ddd;
+        border-radius: 5px 0 0 5px;
+        font-size: 1em;
+    }
+
+    .search-container button {
+        padding: 12px 20px;
+        border: 1px solid #007BFF;
+        background-color: #007BFF;
+        color: white;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.3s;
+    }
+
+    .search-container button:hover {
+        background-color: #0056b3;
+    }
+
+    .list-section {
+        margin-bottom: 25px;
+    }
+
+    .list-section h2 {
+        font-size: 1.8em;
+        color: #007BFF;
+        border-bottom: 2px solid #007BFF;
+        padding-bottom: 5px;
+        margin-bottom: 15px;
+    }
+
+    .list-section ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .list-section li {
+        margin-bottom: 8px;
+    }
+
+    .list-section a {
+        text-decoration: none;
+        color: #495057;
+        font-size: 1.1em;
+        transition: color 0.3s;
+    }
+
+    .list-section a:hover {
+        color: #007BFF;
+        text-decoration: underline;
+    }
+        /* Pega el código CSS aquí */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Listado de Canciones</h1>
+        
+        <div class="search-container">
+            <form action="/search" method="post">
+                <input type="text" name="query" placeholder="Buscar canción...">
+                <button type="submit">Buscar</button>
+            </form>
+        </div>
+
+        {% for letter, songs_by_letter in alphabetized_songs.items() %}
+            <div class="list-section">
+                <h2>{{ letter }}</h2>
+                <ul>
+                    {% for song in songs_by_letter %}
+                        <li><a href="/song/{{ song }}">{{ song }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
