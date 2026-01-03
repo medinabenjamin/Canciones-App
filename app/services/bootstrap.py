@@ -5,6 +5,10 @@ from app.models import Rol, Usuario
 
 
 def ensure_roles_and_admin():
+    inspector = db.inspect(db.engine)
+    if not inspector.has_table("roles"):
+        return
+
     role_names = [
         ("Admin", "Acceso total al sistema"),
         ("Líder", "Gestiona canciones y usuarios asignados"),
