@@ -1,6 +1,7 @@
 import re
 
 from flask import Blueprint, current_app, render_template, request
+from flask_login import login_required
 
 from app.services.github import get_song_content, get_song_list
 
@@ -31,6 +32,7 @@ def chordpro_to_html(content):
 
 
 @main_bp.route("/")
+@login_required  # Vista normal protegida con login_required
 def index():
     owner = current_app.config["GITHUB_OWNER"]
     repo = current_app.config["GITHUB_REPO"]
@@ -46,6 +48,7 @@ def index():
 
 
 @main_bp.route("/search", methods=["POST"])
+@login_required
 def search():
     query = request.form.get("query")
     owner = current_app.config["GITHUB_OWNER"]
@@ -58,6 +61,7 @@ def search():
 
 
 @main_bp.route("/song/<filename>")
+@login_required
 def show_song(filename):
     owner = current_app.config["GITHUB_OWNER"]
     repo = current_app.config["GITHUB_REPO"]

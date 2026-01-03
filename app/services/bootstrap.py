@@ -6,7 +6,7 @@ from app.models import Rol, Usuario
 
 def ensure_roles_and_admin():
     inspector = db.inspect(db.engine)
-    if not inspector.has_table("roles"):
+    if not inspector.has_table("roles") or not inspector.has_table("usuarios"):
         return
 
     role_names = [
@@ -22,11 +22,15 @@ def ensure_roles_and_admin():
 
     db.session.commit()
 
-    if Usuario.query.count() == 0:
+    admin_role = Rol.query.filter_by(nombre="Admin").first()
+    admin_exists = False
+    if admin_role:
+        admin_exists = Usuario.query.filter_by(rol_id=admin_role.id).first() is not None
+
+    if not admin_exists and admin_role:
         admin_email = os.environ.get("ADMIN_EMAIL", "admin@example.com")
         admin_password = os.environ.get("ADMIN_PASSWORD", "admin123")
         admin_name = os.environ.get("ADMIN_NAME", "Administrador")
-        admin_role = Rol.query.filter_by(nombre="Admin").first()
         password_hash = bcrypt.generate_password_hash(admin_password).decode("utf-8")
         admin_user = Usuario(
             nombre=admin_name,

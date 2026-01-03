@@ -21,6 +21,7 @@ class Rol(db.Model):
 
 
 class Usuario(UserMixin, db.Model):
+    """Modelo de usuario con SQLAlchemy y Flask-Login."""
     __tablename__ = "usuarios"
 
     id = db.Column(db.Integer, primary_key=True)
