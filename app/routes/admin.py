@@ -33,7 +33,7 @@ def manage_users():
 
 @admin_bp.route("/users/<int:user_id>/role", methods=["POST"])
 @login_required
-@role_required("Admin")
+@role_required("Admin")  # Vista solo admin (RBAC)
 def update_user_role(user_id):
     rol_id = request.form.get("rol_id")
     user = Usuario.query.get_or_404(user_id)
