@@ -5,7 +5,6 @@
     <title>Resultados de búsqueda</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        <style>
     body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         background: #f4f7f6;
@@ -30,7 +29,7 @@
     h1 {
         text-align: center;
         color: #444;
-        font-size: 2.5em;
+        font-size: 2.2em;
         margin-bottom: 20px;
         font-weight: 300;
     }
@@ -74,11 +73,40 @@
     .back-link:hover {
         color: #0056b3;
     }
-</style>
+
+    .nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        font-size: 0.95em;
+    }
+
+    .nav a {
+        margin-left: 12px;
+        color: #007BFF;
+        text-decoration: none;
+    }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="nav">
+            {% if current_user.is_authenticated %}
+                <span>Hola, {{ current_user.nombre }}</span>
+                <div>
+                    {% if current_user.rol and current_user.rol.nombre in ['Admin', 'Líder'] %}
+                        <a href="{{ url_for('songs.manage_songs') }}">Gestión de canciones</a>
+                    {% endif %}
+                    {% if current_user.rol and current_user.rol.nombre in ['Admin', 'Líder'] %}
+                        <a href="{{ url_for('admin.manage_users') }}">Gestión de usuarios</a>
+                    {% endif %}
+                    <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+                </div>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}">Iniciar sesión</a>
+            {% endif %}
+        </div>
         <h1>Resultados para "{{ query }}"</h1>
         
         {% if results %}

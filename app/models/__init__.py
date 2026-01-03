@@ -1,3 +1,5 @@
+from flask_login import UserMixin
+
 from app.extensions import db
 
 
@@ -18,16 +20,29 @@ class Rol(db.Model):
     usuarios = db.relationship("Usuario", back_populates="rol", lazy=True)
 
 
-class Usuario(db.Model):
+class Usuario(UserMixin, db.Model):
     __tablename__ = "usuarios"
 
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=True)
     rol_id = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=True)
 
     rol = db.relationship("Rol", back_populates="usuarios")
     participaciones = db.relationship("Participacion", back_populates="usuario", lazy=True)
+    created_songs = db.relationship(
+        "Cancion",
+        foreign_keys="Cancion.creado_por_id",
+        back_populates="creado_por",
+        lazy=True,
+    )
+    updated_songs = db.relationship(
+        "Cancion",
+        foreign_keys="Cancion.editado_por_id",
+        back_populates="editado_por",
+        lazy=True,
+    )
 
 
 class Cancion(db.Model):
@@ -37,9 +52,13 @@ class Cancion(db.Model):
     titulo = db.Column(db.String(200), nullable=False)
     artista = db.Column(db.String(200))
     tono = db.Column(db.String(40))
+    creado_por_id = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=True)
+    editado_por_id = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=True)
 
     participaciones = db.relationship("Participacion", back_populates="cancion", lazy=True)
     playlists = db.relationship("PlaylistPlan", secondary=playlist_cancion, back_populates="canciones")
+    creado_por = db.relationship("Usuario", foreign_keys=[creado_por_id], back_populates="created_songs")
+    editado_por = db.relationship("Usuario", foreign_keys=[editado_por_id], back_populates="updated_songs")
 
 
 class Servicio(db.Model):
@@ -75,3 +94,17 @@ class PlaylistPlan(db.Model):
     fecha = db.Column(db.Date)
 
     canciones = db.relationship("Cancion", secondary=playlist_cancion, back_populates="playlists")
+
+
+class AuditLog(db.Model):
+    __tablename__ = "audit_logs"
+
+    id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=True)
+    accion = db.Column(db.String(120), nullable=False)
+    entidad = db.Column(db.String(120), nullable=False)
+    entidad_id = db.Column(db.Integer, nullable=True)
+    detalle = db.Column(db.Text)
+    creado_en = db.Column(db.DateTime, server_default=db.func.now(), nullable=False)
+
+    usuario = db.relationship("Usuario", lazy=True)
