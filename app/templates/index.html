@@ -96,11 +96,40 @@
         color: #007BFF;
         text-decoration: underline;
     }
-        /* Pega el código CSS aquí */
+
+    .nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        font-size: 0.95em;
+    }
+
+    .nav a {
+        margin-left: 12px;
+        color: #007BFF;
+        text-decoration: none;
+    }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="nav">
+            {% if current_user.is_authenticated %}
+                <span>Hola, {{ current_user.nombre }}</span>
+                <div>
+                    {% if current_user.rol and current_user.rol.nombre in ['Admin', 'Líder'] %}
+                        <a href="{{ url_for('songs.manage_songs') }}">Gestión de canciones</a>
+                    {% endif %}
+                    {% if current_user.rol and current_user.rol.nombre in ['Admin', 'Líder'] %}
+                        <a href="{{ url_for('admin.manage_users') }}">Gestión de usuarios</a>
+                    {% endif %}
+                    <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+                </div>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}">Iniciar sesión</a>
+            {% endif %}
+        </div>
         <h1>Listado de Canciones</h1>
         
         <div class="search-container">
